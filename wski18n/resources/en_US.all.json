@@ -920,6 +920,10 @@
     "translation": "the maximum memory `LIMIT` in MB for the action"
   },
   {
+    "id": "the maximum cpu `LIMIT` in cores for the action",
+    "translation": "the maximum cpu `LIMIT` in cores for the action"
+  },
+  {
     "id": "the maximum intra-container concurrent activation `LIMIT` for the action",
     "translation": "the maximum intra-container concurrent activation `LIMIT` for the action"
   },

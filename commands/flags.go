@@ -27,6 +27,7 @@ import (
 
 const (
 	MEMORY_FLAG      = "memory"
+	CPU_FLAG         = "cpu"
 	LOG_SIZE_FLAG    = "logsize"
 	CONCURRENCY_FLAG = "concurrency"
 	TIMEOUT_FLAG     = "timeout"
@@ -141,6 +142,7 @@ type ActionFlags struct {
 	sequence    bool
 	timeout     int
 	memory      int
+	cpu         float32
 	logsize     int
 	concurrency int
 	result      bool

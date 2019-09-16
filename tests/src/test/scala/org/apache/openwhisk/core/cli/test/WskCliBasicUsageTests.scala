@@ -42,6 +42,7 @@ import org.apache.openwhisk.core.entity._
 import org.apache.openwhisk.core.entity.ConcurrencyLimit._
 import org.apache.openwhisk.core.entity.LogLimit._
 import org.apache.openwhisk.core.entity.MemoryLimit._
+import org.apache.openwhisk.core.entity.CPULimit._
 import org.apache.openwhisk.core.entity.TimeLimit._
 import org.apache.openwhisk.core.entity.size.SizeInt
 import org.apache.openwhisk.utils.retry
@@ -395,6 +396,7 @@ class WskCliBasicUsageTests extends TestHelpers with WskTestHelpers {
     (wp, assetHelper) =>
       val name = "annotations"
       val memoryLimit = 512 MB
+      val cpuLimit = 0.5
       val logLimit = 1 MB
       val timeLimit = 60 seconds
 
@@ -403,6 +405,7 @@ class WskCliBasicUsageTests extends TestHelpers with WskTestHelpers {
           name,
           Some(TestUtils.getTestActionFilename("helloAsync.js")),
           memory = Some(memoryLimit),
+          cpu = Some(cpuLimit),
           timeout = Some(timeLimit),
           logsize = Some(logLimit),
           concurrency = Some(concurrencyLimit))
@@ -420,7 +423,8 @@ class WskCliBasicUsageTests extends TestHelpers with WskTestHelpers {
               TimeLimit(timeLimit),
               MemoryLimit(memoryLimit),
               LogLimit(logLimit),
-              ConcurrencyLimit(concurrencyLimit)).toJson)
+              ConcurrencyLimit(concurrencyLimit),
+              CPULimit(cpuLimit)).toJson)
 
         val path = annotations.find {
           _.fields("key").convertTo[String] == "path"
@@ -1233,7 +1237,7 @@ class WskCliBasicUsageTests extends TestHelpers with WskTestHelpers {
       baseAnnotations
     }
     val expectedLimits =
-      JsObject("timeout" -> 60000.toJson, "memory" -> 256.toJson, "logs" -> 10.toJson, "concurrency" -> 1.toJson)
+      JsObject("timeout" -> 60000.toJson, "memory" -> 256.toJson, "logs" -> 10.toJson, "concurrency" -> 1.toJson, "cpu" -> (0.2).toJson)
 
     (wp, assetHelper) =>
       assetHelper.withCleaner(wsk.action, name) { (action, _) =>
@@ -2157,13 +2161,15 @@ class WskCliBasicUsageTests extends TestHelpers with WskTestHelpers {
                     memory: Option[ByteSize] = None,
                     logs: Option[ByteSize] = None,
                     concurrency: Option[Int] = None,
+                    cpu: Option[Float] = None,
                     ec: Int = SUCCESS_EXIT) = {
         // Limits to assert, standard values if CLI omits certain values
         val limits = JsObject(
           "timeout" -> timeout.getOrElse(STD_DURATION).toMillis.toJson,
           "memory" -> memory.getOrElse(STD_MEMORY).toMB.toInt.toJson,
           "logs" -> logs.getOrElse(STD_LOGSIZE).toMB.toInt.toJson,
-          "concurrency" -> concurrency.getOrElse(STD_CONCURRENT).toJson)
+          "concurrency" -> concurrency.getOrElse(STD_CONCURRENT).toJson,
+          "cpu" -> cpuLimit.getOrElse(STD_CPU).toJson)
 
         val name = "ActionLimitTests" + Instant.now.toEpochMilli
         val createResult =
@@ -2175,9 +2181,10 @@ class WskCliBasicUsageTests extends TestHelpers with WskTestHelpers {
               memory = memory,
               timeout = timeout,
               concurrency = concurrency,
+              cpu = cpu,
               expectedExitCode = DONTCARE_EXIT)
             withClue(
-              s"create failed for parameters: timeout = $timeout, memory = $memory, logsize = $logs, concurrency = $concurrency:") {
+              s"create failed for parameters: timeout = $timeout, memory = $memory, logsize = $logs, concurrency = $concurrency, cpu = $cpu:") {
               result.exitCode should be(ec)
             }
             result
@@ -2203,7 +2210,8 @@ class WskCliBasicUsageTests extends TestHelpers with WskTestHelpers {
         time <- Seq(None, Some(MIN_DURATION), Some(MAX_DURATION))
         mem <- Seq(None, Some(MIN_MEMORY), Some(MAX_MEMORY))
         log <- Seq(None, Some(MIN_LOGSIZE), Some(MAX_LOGSIZE))
-        concurrency <- Seq(None, Some(MIN_CONCURRENT), Some(MAX_CONCURRENT))
+        concurrency <- Seq(None, Some(MIN_CONCURRENT), Some(MAX_CONCURRENT),
+        cpu <- Seq(None, Some(MIN_CPU), Some(MAX_CPU)))
       } testLimit(time, mem, log, concurrency)
 
       // Assert that invalid permutation are rejected
