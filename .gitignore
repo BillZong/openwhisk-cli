@@ -8,6 +8,12 @@ Godeps/_workspace
 # IDE-related exclusions
 .idea/
 *.iml
+.project
+.settings/
+tests/.classpath
+tests/.project
+tests/.settings/
+.vscode/
 
 # Gradle build working directories
 /.gradle/
