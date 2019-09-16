@@ -55,8 +55,8 @@ before_script:
   - GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/)
   - test -z "$(gofmt -s -l $(echo $GO_FILES))"
   - cd $TRAVIS_BUILD_DIR/..
-  - git clone https://github.com/apache/openwhisk-utilities.git
-  - git clone https://github.com/apache/openwhisk.git
+  - git clone https://github.com/BillZong/openwhisk-utilities.git
+  - git clone https://github.com/BillZong/openwhisk.git
   - cd openwhisk
   - ./tools/travis/setup.sh
 
@@ -92,9 +92,9 @@ before_deploy:
       git config --global user.name "Travis CI";
       export GIT_TAG="latest";
       git tag -d $GIT_TAG;
-      git push -q https://$API_KEY@github.com/apache/openwhisk-cli :refs/tags/$GIT_TAG;
+      git push -q https://$API_KEY@github.com/BillZong/openwhisk-cli :refs/tags/$GIT_TAG;
       GIT_COMMITTER_DATE="$(git show --format=%aD | head -1)" git tag $GIT_TAG -a -m "Generated tag from Travis CI build $TRAVIS_BUILD_NUMBER";
-      git push -f -q https://$API_KEY@github.com/apache/openwhisk-cli $GIT_TAG;
+      git push -f -q https://$API_KEY@github.com/BillZong/openwhisk-cli $GIT_TAG;
     fi
   - echo "The GIT_TAG of this Travis build is $GIT_TAG."
 

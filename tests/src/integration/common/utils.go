@@ -115,7 +115,7 @@ func GetTestActionFilename(fileName string) string {
 }
 
 func GetRepoPath() string {
-	return os.Getenv("GOPATH") + "/src/github.com/apache/openwhisk-cli"
+	return os.Getenv("GOPATH") + "/src/github.com/BillZong/openwhisk-cli"
 }
 
 func GetBinPath() string {

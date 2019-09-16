@@ -28,7 +28,7 @@ set -e
 #  Also at this point, you should already have the openwhisk main repo. pulled down
 #  from gradle in the parent directory, using a command such as:
 #
-#    git clone --depth 3 https://github.com/apache/openwhisk.git
+#    git clone --depth 3 https://github.com/BillZong/openwhisk.git
 #
 #  To be clear, your directory structure will look something like...
 #

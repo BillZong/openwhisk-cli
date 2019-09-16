@@ -20,8 +20,8 @@ package commands
 import (
 	"errors"
 
-	"github.com/apache/openwhisk-cli/wski18n"
-	"github.com/apache/openwhisk-client-go/whisk"
+	"github.com/BillZong/openwhisk-cli/wski18n"
+	"github.com/BillZong/openwhisk-client-go/whisk"
 )
 
 func entityNameError(entityName string) error {
